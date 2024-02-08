@@ -1,0 +1,12 @@
+{
+    "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+    "name": "lvglxx",
+    "version": "0.0.1",
+    "description": "LVGL bindings for C++. LVGL is a powerful and easy-to-use embedded GUI with many widgets, advanced visual effects (opacity, antialiasing, animations) and low memory requirements.",
+    "keywords": "esp32, lvgl, gui",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/0xxon/lvglxx.git"
+    },
+    "license": "BDS-3-Clause"
+}
