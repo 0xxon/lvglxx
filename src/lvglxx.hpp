@@ -8,6 +8,8 @@
 #include <vector>
 #include <functional>
 
+namespace lvglxx {
+
 // Helper classes for callbacks
 template<class WrapperType>
 using ui_event_callback = std::function<void (WrapperType&, lv_event_t*)>;
@@ -69,20 +71,20 @@ protected:
     lv_obj_t* obj_ = nullptr;
 };
 
-class ObjectWrapper : public BaseWrapper<ObjectWrapper>{
+class Object : public BaseWrapper<Object>{
 public:
-    explicit ObjectWrapper(lv_obj_t* parent) { obj_ = lv_obj_create(parent); }
+    explicit Object(lv_obj_t* parent) { obj_ = lv_obj_create(parent); }
 };
 
 template <typename Child>
-class LabelWrapperBase : public BaseWrapper<Child> {
+class LabelBase : public BaseWrapper<Child> {
 public:
-    LabelWrapperBase() = default;
-    explicit LabelWrapperBase(lv_obj_t* parent) {
+    LabelBase() = default;
+    explicit LabelBase(lv_obj_t* parent) {
         this->obj_ = lv_label_create(parent);
     }
 
-    LabelWrapperBase(lv_obj_t* parent, std::string_view text) {
+    LabelBase(lv_obj_t* parent, std::string_view text) {
         this->obj_ = lv_label_create(parent);
         lv_label_set_text(this->obj_, text.data());
     }
@@ -90,61 +92,61 @@ public:
     Child& SetText(std::string_view text) { lv_label_set_text(this->obj_, text.data()); return static_cast<Child&>(*this); }
 };
 
-class LabelWrapper : public LabelWrapperBase<LabelWrapper> {
+class Label : public LabelBase<Label> {
 public:
-    LabelWrapper() = default;
-    explicit LabelWrapper(lv_obj_t* parent) : LabelWrapperBase(parent) {}
-    LabelWrapper(lv_obj_t* parent, std::string_view text) : LabelWrapperBase(parent, text) {}
+    Label() = default;
+    explicit Label(lv_obj_t* parent) : LabelBase(parent) {}
+    Label(lv_obj_t* parent, std::string_view text) : LabelBase(parent, text) {}
 };
 
-class ButtonWrapper : public BaseWrapper<ButtonWrapper> {
+class Button : public BaseWrapper<Button> {
 public:
-    ButtonWrapper() = default;
-    explicit ButtonWrapper(lv_obj_t* parent) {
+    Button() = default;
+    explicit Button(lv_obj_t* parent) {
         obj_ = lv_button_create(parent);
-        thelabel = LabelWrapper(obj_);
+        thelabel = Label(obj_);
         thelabel.SetWidth().SetHeight().SetText(""); // .SetAlign(LV_ALIGN_CENTER);
     }
-    ButtonWrapper(lv_obj_t* parent, std::string_view text) : ButtonWrapper(parent) {
+    Button(lv_obj_t* parent, std::string_view text) : Button(parent) {
         SetText(text);
     }
 
-    LabelWrapper& Label() { return thelabel; }
-    ButtonWrapper& SetText(std::string_view text) { thelabel.SetText(text); return *this; }
+    Label& GetLabel() { return thelabel; }
+    Button& SetText(std::string_view text) { thelabel.SetText(text); return *this; }
 
 private:
-    LabelWrapper thelabel;
+    Label thelabel;
 };
 
-class BarWrapper : public BaseWrapper<BarWrapper> {
+class Bar : public BaseWrapper<Bar> {
 public:
-    BarWrapper() = default;
-    explicit BarWrapper(lv_obj_t* parent) {
+    Bar() = default;
+    explicit Bar(lv_obj_t* parent) {
         obj_ = lv_bar_create(parent);
-        thelabel = LabelWrapper(obj_);
+        thelabel = Label(obj_);
         thelabel.SetWidth().SetHeight().SetText("").SetAlign(LV_ALIGN_CENTER);
     }
 
-    LabelWrapper& Label() { return thelabel; }
+    Label& GetLabel() { return thelabel; }
 
-    BarWrapper& SetValue(int32_t val) { lv_bar_set_value(obj_, val, LV_ANIM_OFF); return *this; }
-    BarWrapper& SetLabel(std::string_view text) { thelabel.SetText(text); return *this; }
+    Bar& SetValue(int32_t val) { lv_bar_set_value(obj_, val, LV_ANIM_OFF); return *this; }
+    Bar& SetLabel(std::string_view text) { thelabel.SetText(text); return *this; }
 
 private:
-    LabelWrapper thelabel;
+    Label thelabel;
 };
 
-class DropdownWrapper : public BaseWrapper<DropdownWrapper> {
+class Dropdown : public BaseWrapper<Dropdown> {
 public:
-    DropdownWrapper() = default;
-    explicit DropdownWrapper(lv_obj_t* parent) {
+    Dropdown() = default;
+    explicit Dropdown(lv_obj_t* parent) {
         obj_ = lv_dropdown_create(parent);
     }
-    DropdownWrapper(lv_obj_t* parent, std::vector<std::string> options) : DropdownWrapper(parent) {
+    Dropdown(lv_obj_t* parent, std::vector<std::string> options) : Dropdown(parent) {
         SetOptions(options);
     }
 
-    DropdownWrapper& SetOptions(std::vector<std::string> options) {
+    Dropdown& SetOptions(std::vector<std::string> options) {
         std::string out;
         for ( auto& el : options )
             out += el + "\n";
@@ -152,6 +154,8 @@ public:
         return *this; 
     }
 
-    DropdownWrapper& SetSelected(uint32_t s) { lv_dropdown_set_selected(obj_, s); return *this; }
+    Dropdown& SetSelected(uint32_t s) { lv_dropdown_set_selected(obj_, s); return *this; }
     uint32_t GetSelected() { return lv_dropdown_get_selected(obj_); }
 };
+
+} // namespace lvglxx
